@@ -29,7 +29,7 @@ class enc:
 
     def salting(self):
         salt = os.urandom(16)
-        hashed_password = hashlib.pbkdf2_hmac('sha512', self.key.encode('utf-8'), salt, 189389)
+        hashed_password = hashlib.pbkdf2_hmac('sha512', self.key, salt, 189389)
         self.salt = salt
         self.key = hashed_password
         return (salt, hashed_password)
