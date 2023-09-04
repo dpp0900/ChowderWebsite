@@ -1,8 +1,5 @@
 from flask import Flask, request, redirect, render_template, jsonify, make_response
-from bs4 import BeautifulSoup
-import requests
 import time
-import base64
 import json
 import static.sqlmng as sql3
 import static.enclib
