@@ -17,7 +17,7 @@ FilterRes = {
     "AllowUnderScoreDot" : "\\_\\.",
     "AllowSpace" : " "
 }
-URLexpression = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+URLexpression = "([A-Za-z]+://)([-\w]+(?:\.\w[-\w]*)+)(:\d+)?(/[^.!,?"<>\[\]{}\s\x7F-\xFF]*(?:[.!,?]+[^.!,?"<>\[\]{}\s\x7F-\xFF]+)*)?"
 
 def MakeExpression(*options: str):
     return re.compile("[^"+"".join(options)+"]")
