@@ -1,26 +1,43 @@
-FROM python:3.8
+FROM ubuntu:22.04
 
+EXPOSE 80
+
+ENV UWSGI_CHEAPER 1
+ENV UWSGI_PROCESSES 5
+
+RUN apt-get update -y
+RUN apt-get upgrade -y
+
+RUN apt-get install python3 python3-pip nginx -y
 ADD ./requirements.txt /requirements.txt
 RUN pip3 install -r requirements.txt
 RUN rm -rf requirements.txt
-RUN apt-get install uwsgi-core -y
+RUN apt-get install uwsgi -y
+#RUN apt-get install uwsgi-core -y
 RUN apt-get install uwsgi-plugin-python3 -y
 
 WORKDIR /
 
-RUN useradd deployer
-RUN chown deployer:deployer /app/tmp
-
 ADD ./app /app
+RUN chmod -R 755 /app
 
-ADD ./conf/uwsgi/uwsgi.ini /etc/uwsgi/apps-available
-ADD ./conf/nginx/uwsgi.conf /etc/nginx/sites-available
+RUN useradd deployer
+RUN chown -R deployer:deployer /app
+RUN chown -R deployer:deployer /app/tmp
 
-#remove soft-link
+ADD ./conf/uwsgi/uwsgi.ini /etc/uwsgi/apps-available/
+ADD ./conf/nginx/uwsgi.conf /etc/nginx/sites-available/
+
+RUN service nginx start
+RUN service uwsgi start
+
+RUN rm -rf /etc/nginx/sites-enabled/*
 RUN rm -rf /etc/uwsgi/apps-enabled/*
-RUN rm -rf /etc/nginx/apps-enabled/*
 
-RUN ln -s /etc/uwsgi/apps-available/uwsgi.ini /etc/uwsgi/app-enabled/uwsgi.ini
-RUN ln -s /etc/nginx/apps-available/nginx.conf /etc/nginx/apps-enabled/nginx.conf
+RUN ln -s /etc/uwsgi/apps-available/uwsgi.ini /etc/uwsgi/apps-enabled/uwsgi.ini
+RUN ln -s /etc/nginx/sites-available/uwsgi.conf /etc/nginx/sites-enabled/uwsgi.conf
 
-RUN 
+ENTRYPOINT [ "/bin/sh" ]
+# RUN nginx -t
+# RUN service nginx restart
+# RUN service uwsgi restart
